@@ -23,9 +23,9 @@ public:
     void generateNumbers(int amount,int min, int max) {
         myFile.open("numbers.txt", ios::out);
         if(myFile.is_open()) {
-            myFile << amount << endl;
+            //myFile << amount << endl;
             for(int i = 0; i < amount; i++)
-            myFile << rand() % max + min << endl;
+            myFile << rand() << endl;
         }
         myFile.close();
     }

@@ -18,25 +18,36 @@ private:
 public:
     BinaryHeap() = default;
 
+    void clear() {
+        data.clear();
+    }
+
+    void printTree(){
+        printTree(0, "", true);
+        std::cout << std::endl;
+    }
+
     void add(int num) {
         data.addLast(num);
         fixUpward(data.getSize() - 1);
     }
 
     //todo optimize
-    void printTree(size_t nextIndex = 0, int pos = 0) {
-        if (nextIndex >= data.getSize()) {
-            for(int i=0; i<pos; i++) std::cout << "\t";
-            std::cout << "*" << std::endl;
-            return;
-        }
-        printTree(getRightChildOf(nextIndex), pos+1);
-        for(int i=0; i<pos; i++) std::cout << "\t";
-        std::cout << data[nextIndex] <<std::endl;
-        printTree(getLeftChildOf(nextIndex),pos+1);
+//    void printTree1(size_t nextIndex = 0, int pos = 0) {
+//        if (nextIndex >= data.getSize()) {
+//            for(int i=0; i<pos; i++) std::cout << "\t";
+//            std::cout << "*" << std::endl;
+//            return;
+//        }
+//        printTree(getRightChildOf(nextIndex), pos+1);
+//        for(int i=0; i<pos; i++) std::cout << "\t";
+//        std::cout << data[nextIndex] <<std::endl;
+//        printTree(getLeftChildOf(nextIndex),pos+1);
+//
+//        std::cout << std:: endl << std::endl;
+//    }
 
-        std::cout << std:: endl << std::endl;
-    }
+
 
     //delete at index, root is default
     void deleteAt(size_t index = 0) {
@@ -52,18 +63,37 @@ public:
         data.contains(num);
     }
 
-    void deleteVal(int num) {
-        if(contains(num)) {
-            size_t index = getIndexOf(num);
+    void deleteValue(int num) {
+        size_t index = getIndexOf(num);
+        if(index != -1) {
             data.swap(index, data.getSize() - 1);
             data.deleteLast();
             fixDownward(index);
         }
+
     }
 
 
 
 private:
+    void printTree(size_t firstIndex, std::string indent, bool last) {
+        // print the tree structure on the screen
+        if (firstIndex < data.getSize()) {
+            std::cout<<indent;
+            if (last) {
+                std::cout<<"R----";
+                indent += "     ";
+            } else {
+                std::cout<<"L----";
+                indent += "|    ";
+            }
+
+            std::cout<<data[firstIndex]<<std::endl;
+            printTree(getLeftChildOf(firstIndex), indent, false);
+            printTree(getRightChildOf(firstIndex), indent, true);
+        }
+    }
+
     size_t getParentOf(size_t childIndex) {
         return (childIndex-1) / 2;
     }
@@ -105,10 +135,12 @@ private:
             }
     }
 
+    //returns -1 if value not found
     size_t getIndexOf(int num) {
         for(size_t i = 0; i < data.getSize(); i ++) {
             if(data[i] == num) return i;
         }
+        return -1;
     }
 
 };

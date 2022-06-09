@@ -26,6 +26,13 @@ class RBTree {
             this -> isRed = isRed;
         }
 
+        ~Node(){
+            this -> data = 0;
+            this -> leftChild = nullptr;
+            this -> rightChild = nullptr;
+        }
+
+
     };
     Node* root = nullptr;
     Node* nullNode = new Node(false);
@@ -35,7 +42,12 @@ class RBTree {
 public:
     RBTree() = default;
 
-    void insert(int num) {
+    void clear() {
+        clear(root);
+        root = nullptr;
+    }
+
+    void add(int num) {
         //create new node and assign to a parent
         Node* newNode = new Node(num, findParent(num));
 
@@ -57,7 +69,7 @@ public:
         }
     }
 
-    void deleteNode(int num) {
+    void remove(int num) {
         Node* node = findRBT(num);
         if(node) deleteNode(node);
     }
@@ -245,7 +257,7 @@ private:
         if( Y != X ) X->data = Y->data;
 
         if( !Y->isRed)   // Naprawa struktury drzewa czerwono-czarnego
-            while( ( Z != root ) && ( !Z -> isRed) )
+            while( ( Z != root ) && Z && ( !(Z -> isRed)) )
                 if( Z == Z->parent->leftChild)
                 {
                     W = Z->parent->rightChild;
@@ -328,6 +340,14 @@ private:
             else           p = p->rightChild;
         if(!p) return nullptr;
         return p;
+    }
+
+    void clear(Node* root) {
+        if(root -> leftChild)
+            clear(root -> leftChild);
+        if(root -> rightChild)
+            clear(root -> rightChild);
+        delete root;
     }
 
 };

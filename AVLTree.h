@@ -19,6 +19,12 @@ class AVLTree {
             this->data = data;
         }
 
+        ~Node(){
+            this -> data = 0;
+            this -> leftChild = nullptr;
+            this -> rightChild = nullptr;
+        }
+
     };
     Node* root = nullptr;
 
@@ -55,6 +61,12 @@ public:
             }
             return false;
     }
+
+    void clear() {
+        clear(root);
+        root = nullptr;
+    }
+
 
 
 private:
@@ -93,7 +105,7 @@ private:
         if (root == nullptr) {
             return new Node(num);
         }
-        if (num < root->data)
+        if (num <= root->data)
             root->leftChild = insertNode(root->leftChild, num);
         else if (num > root->data)
             root->rightChild = insertNode(root->rightChild, num);
@@ -119,7 +131,7 @@ private:
                 (root->rightChild == nullptr)) {
                 //if there's no left child, there may be right one
                 Node *temp = root-> leftChild ? root-> leftChild : root->rightChild;
-                free(root);
+                delete root;
                 return temp;
             } else {
                 //two children
@@ -194,6 +206,14 @@ private:
             }
         }
         return node;
+    }
+
+    void clear(Node* root) {
+        if(root -> leftChild)
+            clear(root -> leftChild);
+        if(root -> rightChild)
+            clear(root -> rightChild);
+        delete root;
     }
 
 

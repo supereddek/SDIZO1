@@ -14,10 +14,16 @@ private:
     size_t arrSize = 0;
 
 public:
-    MyArray() = default;
+    MyArray() {
+        data = nullptr;
+        arrSize = 0;
+    }
 
+    //todo
     ~MyArray() {
-        delete[] data;
+        free(data);
+        data = nullptr;
+        arrSize = 0;
     }
 
     int operator[](const size_t index) {
@@ -50,7 +56,7 @@ private:
 
         std::copy(data + isFirst, data + newSize + isFirst, newArray);
         arrSize = newSize;
-        delete[] data;
+        delete[]data;
         data = newArray;
     }
 
@@ -64,7 +70,7 @@ private:
         std::copy(data + index, data + arrSize, newArray + index + offset);
 
         arrSize = newSize;
-        delete[] data;
+        delete[]data;
         data = newArray;
     }
 
@@ -76,7 +82,7 @@ private:
         std::copy(data + index, data + arrSize, newArray + index + 1);
 
         arrSize = newSize;
-        delete[] data;
+        delete[]data;
         data = newArray;
     }
 
@@ -88,12 +94,22 @@ private:
         std::copy(data + index + 1, data + arrSize, newArray + index);
 
         arrSize = newSize;
-        delete[] data;
+        delete[]data;
         data = newArray;
     }
 
 public:
 
+    //todo print
+    void deleteValue(int num) {
+        for (int i = 0; i < arrSize; i ++) {
+            if(num == data[i]) {
+                moveLeft(i);
+                return;
+            }
+        }
+        //std::cout << "Value not found!" << std::endl;
+    }
 
     void addLast(int num) {
         enlarge();
@@ -107,9 +123,10 @@ public:
     }
 
 
-    void insert(int num, int index) {
+    void insertAt(int num, int index) {
         if (index > arrSize) {
-            throw std::out_of_range("Inserting element outside of array!");
+            std::cout << "Index out of range!" << std::endl;
+            return;
         }
         //split(index, 1);
         moveRight(index);
@@ -118,7 +135,8 @@ public:
 
     void deleteAt(int index){
         if (index >= arrSize) {
-            throw std::out_of_range("Deleting element outside of array!");
+            std::cout << "Index out of range!" << std::endl;
+            return;
         }
         moveLeft(index);
     };
@@ -156,9 +174,13 @@ public:
     }
 
     void clear() {
-        delete[] data;
+        std::fill(data, data + arrSize, 0);
         arrSize = 0;
+        delete[] data;
+        data = nullptr;
     }
+
+
 
 
     size_t getSize() {

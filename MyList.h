@@ -62,25 +62,25 @@ public:
         tail = newElem;
     }
 
-    void insertAt(int num, size_t index) {
-        //todo
-        try {
-            Node *nextElem = getNodeAt(index);
-            Node *newElem = new Node();
-
-            newElem->data = num;
-            newElem->next = nextElem;
-            newElem->prev = nextElem->prev;
-
-            if (nextElem->prev) {
-                nextElem->prev->next = newElem;
-            } else {
-                head = newElem;
-            }
-            nextElem->prev = newElem;
-        } catch (std::out_of_range) {
-            addLast(num);
+    void add(int num, size_t index) {
+        Node *nextElem = getNodeAt(index);
+        if(!nextElem) {
+            std::cout << "Index out of range!" << std::endl;
+            return;
         }
+
+        Node *newElem = new Node();
+
+        newElem->data = num;
+        newElem->next = nextElem;
+        newElem->prev = nextElem->prev;
+
+        if (nextElem->prev) {
+            nextElem->prev->next = newElem;
+        } else {
+            head = newElem;
+        }
+        nextElem->prev = newElem;
     }
 
     void deleteFirst() {
@@ -147,7 +147,7 @@ private:
         for(int i = 0; i < index; i ++) {
             temp = temp -> next;
             if(temp == nullptr) {
-                throw std::out_of_range("Index out of range!");
+                return nullptr;
             }
         }
         return temp;
