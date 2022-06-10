@@ -113,6 +113,15 @@ private:
         else return nullNode;
     }
 
+    Node* findSibling(Node* node) {
+        if(!node -> parent)
+            return nullptr;
+        if(isOnLeft(node))
+            return node -> parent -> rightChild;
+        else
+            return node -> parent -> leftChild;
+    }
+
     void printTree(Node* root, std::string indent, bool last) {
         // print the tree structure on the screen
         if (root) {
@@ -132,7 +141,7 @@ private:
         }
     }
 
-    //todo
+
     void fixInsert(Node* node) {
         Node* uncle = (findUncle(node) ? findUncle(node) : nullNode);
         while (node -> parent -> isRed){
@@ -171,7 +180,7 @@ private:
         }
     }
 
-    ///todo
+
     void rightRotate(Node* higherNode) {
         Node* lowerNode = higherNode->leftChild;
         higherNode->leftChild = lowerNode->rightChild;
@@ -232,100 +241,165 @@ private:
         return nullptr;
     }
 
-    void deleteNode ( Node * X )
-    {
-        Node * W = nullptr;
-        Node * Y = nullptr;
-        Node * Z = nullptr;
+    // find node that replaces a deleted node in BST
+    Node* BSTreplace(Node *x) {
+        // when node have 2 children
+        if (x->leftChild and x->rightChild)
+            return findSuccessor(x);
 
-        if( ( X->leftChild == nullptr ) || ( X->rightChild == nullptr ) ) Y = X;
-        else Y = findSuccessor(X);
+        // when leaf
+        if (!x->leftChild and !x->rightChild)
+            return nullptr;
 
-        if( Y->leftChild) Z = Y->leftChild;
-        else Z = Y->rightChild;
-
-        Z->parent = Y->parent;
-
-        if( !Y->parent) root = Z;
-        else if( Y == Y->parent->leftChild) Y->parent->leftChild = Z;
-        else Y->parent->rightChild = Z;
-
-        if( Y != X ) X->data = Y->data;
-
-        if( !Y->isRed)   // Naprawa struktury drzewa czerwono-czarnego
-            while( ( Z != root ) && Z && ( !(Z -> isRed)) )
-                if( Z == Z->parent->leftChild)
-                {
-                    W = Z->parent->rightChild;
-
-                    if( W-> isRed )
-                    {              // Przypadek 1
-                        W->isRed = false;
-                        Z->parent->isRed = true;
-                         leftRotate( Z->parent );
-                        W = Z->parent->rightChild;
-                    }
-
-                    if( ( !W->leftChild->isRed ) && ( !W->rightChild->isRed ) )
-                    {              // Przypadek 2
-                        W->isRed = true;
-                        Z = Z->parent;
-                        continue;
-                    }
-
-                    if( !W->rightChild->isRed )
-                    {              // Przypadek 3
-                        W->leftChild->isRed = false;
-                        W->isRed = true;
-                        rightRotate( W );
-                        W = Z->parent->rightChild;
-                    }
-
-                    W->isRed = Z->parent->isRed; // Przypadek 4
-                    Z->parent->isRed = false;
-                    W->rightChild->isRed = false;
-                    leftRotate( Z->parent );
-                    Z = root;      // To spowoduje zakończenie pętli
-                }
-                else
-                {                // Przypadki lustrzane
-                    W = Z->parent->leftChild;
-
-                    if( W->isRed)
-                    {              // Przypadek 1
-                        W->isRed = false;
-                        Z->parent->isRed;
-                        rightRotate( Z->parent );
-                        W = Z->parent->leftChild;
-                    }
-
-                    if( ( !W->leftChild->isRed) && ( !W->rightChild->isRed) )
-                    {              // Przypadek 2
-                        W->isRed = true;
-                        Z = Z->parent;
-                        continue;
-                    }
-
-                    if( !W->leftChild->isRed )
-                    {              // Przypadek 3
-                        W->rightChild->isRed = false;
-                        W->isRed = true;
-                        leftRotate( W );
-                        W = Z->parent->leftChild;
-                    }
-
-                    W->isRed = Z->parent->isRed;  // Przypadek 4
-                    Z->parent->isRed = false;
-                    W->leftChild->isRed = false;
-                    rightRotate( Z->parent );
-                    Z = root;      // To spowoduje zakończenie pętli
-                }
-
-                if(Z) Z->isRed = false;
-
-        delete Y;
+        // when single child
+        if (x->leftChild)
+            return x->leftChild;
+        else
+            return x->rightChild;
     }
 
+    void fixDoubleBlack(Node *x) {
+        if (x == root)
+            // Reached root
+            return;
+
+        Node *sibling = findSibling(x), *parent = x->parent;
+        if (!sibling) {
+            // No sibiling, double black pushed up
+            fixDoubleBlack(parent);
+        } else {
+            if (sibling->isRed) {
+                // Sibling red
+                parent->isRed = true;
+                sibling->isRed = false;
+                if (isOnLeft(sibling)) {
+                    // left case
+                    rightRotate(parent);
+                } else {
+                    // right case
+                    leftRotate(parent);
+                }
+                fixDoubleBlack(x);
+            } else {
+                // Sibling black
+                if (sibling->leftChild -> isRed or sibling -> rightChild -> isRed) {
+                    // at least 1 red children
+                    if (sibling->leftChild and sibling->leftChild->isRed) {
+                        if (isOnLeft(sibling)) {
+                            // left left
+                            sibling->leftChild->isRed = sibling->isRed;
+                            sibling->isRed = parent->isRed;
+                            rightRotate(parent);
+                        } else {
+                            // right left
+                            sibling->leftChild->isRed = parent->isRed;
+                            rightRotate(sibling);
+                            leftRotate(parent);
+                        }
+                    } else {
+                        if (isOnLeft(sibling)) {
+                            // left right
+                            sibling->rightChild->isRed = parent->isRed;
+                            leftRotate(sibling);
+                            rightRotate(parent);
+                        } else {
+                            // right right
+                            sibling->rightChild->isRed = sibling->isRed;
+                            sibling->isRed = parent->isRed;
+                            leftRotate(parent);
+                        }
+                    }
+                    parent->isRed = false;
+                } else {
+                    // 2 black children
+                    sibling->isRed = true;
+                    if (!parent->isRed)
+                        fixDoubleBlack(parent);
+                    else
+                        parent->isRed = false;
+                }
+            }
+        }
+    }
+
+    // deletes the given node
+    void deleteNode(Node *v) {
+        Node *u = BSTreplace(v);
+
+        // True when u and v are both black
+        bool uvBlack = ((u == nullptr or !u->isRed) and (!v->isRed));
+        Node *parent = v->parent;
+
+        if (u == nullptr) {
+            // u is nullptr therefore v is leaf
+            if (v == root) {
+                // v is root, making root nullptr
+                root = nullptr;
+            } else {
+                if (uvBlack) {
+                    // u and v both black
+                    // v is leaf, fix double black at v
+                    fixDoubleBlack(v);
+                } else {
+                    // u or v is red
+                    if (findSibling(v))
+                        // sibling is not nullptr, make it red
+                        findSibling(v) -> isRed = true;
+                }
+
+                // delete v from the tree
+                if (isOnLeft(v)) {
+                    parent->leftChild = nullptr;
+                } else {
+                    parent->rightChild = nullptr;
+                }
+            }
+            delete v;
+            return;
+        }
+
+        if (v->leftChild == nullptr or v->rightChild == nullptr) {
+            // v has 1 child
+            if (v == root) {
+                // v is root, assign the value of u to v, and delete u
+                v->data = u->data;
+                v->leftChild = v->rightChild = nullptr;
+                delete u;
+            } else {
+                // Detach v from tree and move u up
+                if (isOnLeft(v)) {
+                    parent->leftChild = u;
+                } else {
+                    parent->rightChild = u;
+                }
+                delete v;
+                u->parent = parent;
+                if (uvBlack) {
+                    // u and v both black, fix double black at u
+                    fixDoubleBlack(u);
+                } else {
+                    // u or v red, color u black
+                    u-> isRed = false;
+                }
+            }
+            return;
+        }
+
+        // v has 2 children, swap values with successor and recurse
+        swapValues(u, v);
+        deleteNode(u);
+    }
+
+
+    void swapValues(Node *u, Node *v) {
+        int temp;
+        temp = u->data;
+        u->data = v->data;
+        v->data = temp;
+    }
+
+    // check if node is left child of parent
+    bool isOnLeft(Node* node) { return node == node -> parent->leftChild; }
     Node* findRBT ( int k )
     {
         Node * p;
@@ -337,6 +411,7 @@ private:
         if(!p) return nullptr;
         return p;
     }
+
 
     void clear(Node* root) {
         if(root -> leftChild)
