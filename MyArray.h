@@ -101,14 +101,25 @@ private:
 public:
 
     //todo print
+    void add(int num, int index) {
+        if((index < -1) || (index > (int)arrSize - 1)) {
+            std::cout << "Indeks poza zakresem!\n";
+            return;
+        }
+        else if (index == 0) addFirst(num);
+        else if (index == -1 || index == arrSize - 1) addLast(num);
+        else insertAt(num, index);
+    }
+
     void deleteValue(int num) {
         for (int i = 0; i < arrSize; i ++) {
             if(num == data[i]) {
                 moveLeft(i);
+                std::cout << "Usunieto wartosc " << num << " z indeksu " << i << std::endl;
                 return;
             }
         }
-        //std::cout << "Value not found!" << std::endl;
+        std::cout << "Nie ma takiej wartosci!" << std::endl;
     }
 
     void addLast(int num) {
@@ -125,7 +136,7 @@ public:
 
     void insertAt(int num, int index) {
         if (index > arrSize) {
-            std::cout << "Index out of range!" << std::endl;
+           // std::cout << "Index out of range!" << std::endl;
             return;
         }
         //split(index, 1);
@@ -152,10 +163,11 @@ public:
     bool contains(int num) {
         for(int i = 0; i < arrSize; i++) {
             if(data[i] == num) {
-                //std::cout << "Found at: " << i << std::endl;
+                std::cout << "Znaleziono na indeksie nr " << i << std::endl;
                 return true;
             }
         }
+        std::cout << "Nie znaleziono.\n";
         return false;
     };
 

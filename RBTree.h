@@ -126,7 +126,7 @@ private:
             }
 
             std::string sColor = root->isRed?"RED":"BLACK";
-            std::cout<<root->data<<"("<<sColor<<")"<<std::endl;
+            std::cout<<"("<<root->data<<sColor<<")"<<std::endl;
             printTree(root->leftChild, indent, false);
             printTree(root->rightChild, indent, true);
         }
@@ -208,29 +208,25 @@ private:
         higherNode->parent = lowerNode;
     }
 
-    Node * minRBT (Node * p )
-    {
-        if( p )
-            while( p->leftChild ) p = p->leftChild;
-        return p;
+    Node* getMinimumValue (Node* node ) {
+            while( node->leftChild ) node = node->leftChild;
+        return node;
     }
 
-    Node * succRBT (Node * p )
+    Node* findSuccessor (Node* node)
     {
-        Node * r;
-
-        if(p)
-        {
-            if( p->rightChild) return minRBT ( p->rightChild );
-            else
-            {
-                r = p-> parent;
-                while( ( r) && ( p == r->rightChild ) )
+        Node* successor;
+        if(node) {
+            if( node->rightChild)
+                return getMinimumValue(node->rightChild);
+            else {
+                successor = node-> parent;
+                while(( successor) && (node == successor->rightChild ) )
                 {
-                    p = r;
-                    r = r-> parent;
+                    node = successor;
+                    successor = successor-> parent;
                 }
-                return r;
+                return successor;
             }
         }
         return nullptr;
@@ -243,12 +239,12 @@ private:
         Node * Z = nullptr;
 
         if( ( X->leftChild == nullptr ) || ( X->rightChild == nullptr ) ) Y = X;
-        else Y = succRBT ( X );
+        else Y = findSuccessor(X);
 
         if( Y->leftChild) Z = Y->leftChild;
         else Z = Y->rightChild;
 
-        //Z->parent = Y->parent;
+        Z->parent = Y->parent;
 
         if( !Y->parent) root = Z;
         else if( Y == Y->parent->leftChild) Y->parent->leftChild = Z;
@@ -330,7 +326,7 @@ private:
         delete Y;
     }
 
-    Node * findRBT ( int k )
+    Node* findRBT ( int k )
     {
         Node * p;
 

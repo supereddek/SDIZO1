@@ -62,10 +62,11 @@ public:
         tail = newElem;
     }
 
-    void add(int num, size_t index) {
+    //Inserts element BEFORE given index
+    void insertAt(int num, size_t index) {
         Node *nextElem = getNodeAt(index);
         if(!nextElem) {
-            std::cout << "Index out of range!" << std::endl;
+            std::cout << "Indeks poza zasiegiem!" << std::endl;
             return;
         }
 
@@ -118,6 +119,8 @@ public:
     }
 
     void deleteAt(size_t index) {
+        Node* temp = getNodeAt(index);
+        if(temp)
         deleteNode(getNodeAt(index));
     }
 
@@ -147,6 +150,7 @@ private:
         for(int i = 0; i < index; i ++) {
             temp = temp -> next;
             if(temp == nullptr) {
+                std::cout << "Nie ma elementu o tym indeksie.\n";
                 return nullptr;
             }
         }
@@ -159,6 +163,7 @@ private:
             if(temp -> data == num) return temp;
             temp = temp -> next;
         }
+        std::cout <<"Nie ma elementu na tym indeksie!\n";
         return nullptr;
     }
 

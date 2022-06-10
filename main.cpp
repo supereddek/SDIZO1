@@ -8,56 +8,40 @@
 #include "Tester.h"
 #include <fstream>
 #include <chrono>
+#include "Menu.h"
+using namespace std;
+
 
 
 int main() {
     srand(time(0));
-    fstream myFile;
-    Tester tester;
-    MyArray list;
-    int num;
-    size_t pos;
-    int amounts[7] = {1000, 5000, 10000, 15000, 20000, 25000, 50000};
+    int input;
+    Menu menu;
+    cout << "Jaka strukture chcesz utworzyc? \n"
+            "1 - Tablica \n"
+            "2 - Lista \n"
+            "3 - Kopiec binarny \n"
+            "4 - Drzewo czerwono-czarne \n"
+            "5 - Drzewo AVL \n";
+    cin >> input;
 
-    fstream results;
-    results.open("results_array.txt", ios::app);
-
-    for (int i = 0; i < 7; i ++) {
-        int result[100] = {};
-        int sum = 0;
-        results << "Operation for " << amounts[i] << endl;
-        cout << "Making test for " << amounts[i] << endl;
-        for (int k = 0; k < 100; k++) {
-            //generating new numbers
-            tester.generateNumbers(amounts[i], INT_MIN, INT_MAX);
-            myFile.open("numbers.txt", ios::in);
-
-            //filling the list
-            for (int j = 0; j < amounts[i]; j++) {
-                myFile >> num;
-                list.addFirst(num);
-            }
-            myFile.close();
-            num = rand();
-            pos = rand() % amounts[i];
-            auto start = std::chrono::high_resolution_clock::now();
-            list.deleteLast();
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-            //results << duration.count() << endl;
-            result[k] = duration.count();
-            sum += result[k];
-            list.clear();
-        }
-        results << sum / 100 << endl;
+    switch (input) {
+        case 1:
+            menu.arrayMenu();
+            break;
+        case 2:
+            menu.listMenu();
+            break;
+        case 3:
+            menu.heapMenu();
+            break;
+        case 4:
+            menu.treeMenu1();
+            break;
+        case 5:
+            menu.treeMenu();
+            break;
     }
-
-
-    results.close();
-
-
-
-
     return 0;
 }
 

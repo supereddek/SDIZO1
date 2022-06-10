@@ -156,7 +156,7 @@ private:
                 std::cout << "L----";
                 indent += "|  ";
             }
-            std::cout << root->data << std::endl;
+            std::cout <<"(" << root->data << ")" <<  std::endl;
             printTree(root->leftChild, indent, false);
             printTree(root->rightChild, indent, true);
         }
