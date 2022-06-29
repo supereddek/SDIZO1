@@ -75,6 +75,10 @@ public:
     }
 
     void printTree(){
+        if(!root){
+            std::cout << "Struktura jest pusta\n\n";
+            return;
+        }
         printTree(root, "", true);
         std::cout << std::endl;
     }
@@ -282,7 +286,8 @@ private:
                 fixDoubleBlack(x);
             } else {
                 // Sibling black
-                if (sibling->leftChild -> isRed or sibling -> rightChild -> isRed) {
+                if ((sibling -> leftChild and sibling->leftChild -> isRed)
+                    or (sibling -> rightChild and sibling -> rightChild -> isRed)) {
                     // at least 1 red children
                     if (sibling->leftChild and sibling->leftChild->isRed) {
                         if (isOnLeft(sibling)) {

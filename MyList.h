@@ -23,11 +23,15 @@ public:
 
     void display() {
         Node* temp = head;
+        if(!head) {
+            std::cout << "Lista jest pusta.\n";
+        }
+
         while(temp) {
             std::cout << temp->data << " ";
             temp = temp -> next;
         }
-        std::cout << std::endl;
+        std::cout << std::endl << std::endl;
     }
 
     void addFirst(int num) {
@@ -121,7 +125,8 @@ public:
     void deleteAt(size_t index) {
         Node* temp = getNodeAt(index);
         if(temp)
-        deleteNode(getNodeAt(index));
+            deleteNode(temp);
+
     }
 
     void clear() {

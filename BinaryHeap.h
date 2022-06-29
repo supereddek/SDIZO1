@@ -23,6 +23,10 @@ public:
     }
 
     void printTree(){
+        if(data.getSize() == 0) {
+            std::cout << "Struktura jest pusta.\n\n";
+            return;
+        }
         printTree(0, "", true);
         std::cout << std::endl;
     }
@@ -52,7 +56,8 @@ public:
     //delete at index, root is default
     void deleteAt(size_t index = 0) {
         if (index >= data.getSize()) {
-            throw std::out_of_range("Deleting element outside of range!");
+            std::cout << "Niewlasciwa operacja\n";
+            return;
         }
         data.swap(index, data.getSize() - 1);
         data.deleteLast();

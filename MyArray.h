@@ -51,6 +51,7 @@ private:
 
     //offset = 1 jesli chcemy usunac 1 element
     void reduce(bool isFirst = false) {
+        if (arrSize == 0) return;
         size_t newSize = arrSize - 1;
         int* newArray = new int[newSize];
 
@@ -135,11 +136,10 @@ public:
 
 
     void insertAt(int num, int index) {
-        if (index > arrSize) {
-           // std::cout << "Index out of range!" << std::endl;
+        if (index > arrSize || index < 0) {
+           std::cout << "Index out of range!" << std::endl;
             return;
         }
-        //split(index, 1);
         moveRight(index);
         data[index] = num;
     }

@@ -43,6 +43,10 @@ public:
 
 
     void printTree() {
+        if(!root) {
+            std::cout << "Struktura jest pusta \n\n";
+            return;
+        }
         printTree(root, "", true);
         std::cout << std::endl;
     }
